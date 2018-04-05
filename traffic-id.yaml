@@ -55,6 +55,21 @@ tls-sni-patterns:
     patterns:
       - googlevideo.com
 
+  - id: google-tracking
+    labels:
+      - tracking
+      - stats
+    patterns:
+      - www.google-analytics.com
+
+  - id: google-ads
+    labels:
+      - tracking
+      - ads
+    patterns:
+      - .doubleclick.net
+      - www.googleadservices.com
+
   # IRCCloud
   - id: irccloud
     label: im
@@ -102,6 +117,22 @@ tls-sni-patterns:
       - feelinsonice-hrd.appspot.com
       - snapchat.com
 
+  # Spotify
+  - id: spotify
+    labels:
+      - music
+    patterns:
+      - spclient.wg.spotify.com
+      - api-partner.spotify.com
+      - scdn.co
+
+  - id: mixcloud
+    labels:
+      - music
+      - streaming
+    patterns:
+      - mixcloud.com
+
   # Twitter
   - id: twitter
     labels:
@@ -126,6 +157,84 @@ tls-sni-patterns:
       - instagram.com
       - cdninstagram.com
 
+  - id: feedly
+    labels:
+      - news
+      - rss
+    patterns:
+      - feedly.com
+
+  - id: nos
+    labels:
+      - news
+    patterns:
+      - nos.nl
+
+  - id: chartbeat
+    labels:
+      - stats
+      - tracking
+    patterns:
+      - chartbeat.net
+
+  - id: github
+    labels:
+      - dev
+    patterns:
+      - github.com
+
+  - id: github-tracking
+    labels:
+      - dev
+      - stats
+      - tracking
+    patterns:
+      - collector.githubapp.com
+
+  - id: mozilla
+    labels:
+      - browser
+    patterns:
+      - firefoxusercontent.com
+      - services.mozilla.com
+
+  - id: rememberthemilk
+    labels:
+      - todo
+    patterns:
+      - rememberthemilk.com
+
+  - id: docker
+    labels:
+      - devops
+    patterns:
+      - registry-1.docker.io
+      - auth.docker.io
+
+  - id: rust-lang
+    labels:
+      - dev
+    patterns:
+      - static.crates.io
+
+  - id: oisf-dev-infra
+    labels:
+      - dev
+    patterns:
+      - buildbot.openinfosecfoundation.org
+
+  - id: apple
+    labels:
+      - software-update
+    patterns:
+      - .push.apple.com
+
+  - id: apple-icloud
+    labels:
+      - cloud
+    patterns:
+      - setup.icloud.com
+
 # Traffic identification where more than simple lists of a specific
 # pattern are required.
 rules:
@@ -148,6 +257,24 @@ rules:
     http_host: ubuntu.com
     http_user_agent: Debian APT
 
+  # Ubuntu Updater
+  - id: ubuntu-swupdate
+    msg: "Ubuntu Software-Update"
+    labels:
+      - software-update
+    proto: http
+    http_host: changelogs.ubuntu.com
+    http_user_agent: Python-urllib/3.5
+
+  # Steam Game downloads
+  - id: steam
+    msg: "Steam"
+    labels:
+      - game
+    proto: http
+    http_host: .steamcontent.com
+    http_user_agent: Valve/Steam HTTP Client
+
 # Map short ID names to full names (or description)
 id-map:
   bing: Bing
@@ -159,6 +286,7 @@ id-map:
   netflix: Netflix
   skype: Skype
   snapchat: Snapchat
+  spotify: Spotify
   twitter: Twitter
   whatsapp: WhatsApp Messenger
   whisper: Signal messaging application
@@ -171,4 +299,5 @@ labels:
   chat: Chat
   file-transfer: File Transfer
   im: Instant Messaging
+  music: Music Stream Service
   video: Video Stream Service
