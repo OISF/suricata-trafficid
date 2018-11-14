@@ -27,7 +27,7 @@ grab the generated .rules files.
 import sys
 import os
 import argparse
-
+import hashlib
 import yaml
 
 ID_PREFIX = "traffic/id"
@@ -38,13 +38,16 @@ SID = 300000000
 LABELS = {}
 IDMAP = {}
 
+
 def print_err(msg):
     print(msg, file=sys.stderr)
+
 
 def as_list(_id):
     if isinstance(_id, type([])):
         return _id
     return [_id]
+
 
 def print_tls_sni(args, output, config):
     global SID
@@ -89,6 +92,7 @@ def print_tls_sni(args, output, config):
 
             SID += 1
 
+
 def print_rules(args, output, config):
     global SID
 
@@ -100,7 +104,8 @@ def print_rules(args, output, config):
         if "msg" in rule:
             options += ["msg:\"SURICATA TRAFFIC-ID: %s\"" % (rule["msg"])]
         else:
-            options += ["msg:\"SURICATA TRAFFIC-ID: %s\"" % as_list(rule["id"])]
+            options += ["msg:\"SURICATA TRAFFIC-ID: %s\"" %
+                        as_list(rule["id"])]
 
         if "http_host" in rule:
             options += [
@@ -132,9 +137,11 @@ def print_rules(args, output, config):
 
         SID += 1
 
+
 def generate_rules(args):
     if args.output:
         output = open(args.output, "w")
+        md5_file = open(args.output+".md5", "w")
     else:
         output = sys.stdout
 
@@ -159,6 +166,14 @@ def generate_rules(args):
                             print_tls_sni(args, output, config[key])
                         elif key == "rules":
                             print_rules(args, output, config[key])
+    output.close()
+
+    if args.output:
+        # Generate the md5 hashsum file
+        hash_md5 = hashlib.md5(open(args.output, 'rb').read()).hexdigest()
+        md5_file.write(hash_md5)
+        md5_file.close()
+
 
 def load_configs():
     configs = []
@@ -169,12 +184,14 @@ def load_configs():
                 configs.append(yaml.load(open(path)))
     return configs
 
+
 def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-o", "--output", metavar="<filename>",
                         help="Output filename for rules")
-    parser.add_argument("--disable-noalert", action="store_true", default=False)
+    parser.add_argument("--disable-noalert",
+                        action="store_true", default=False)
     parser.add_argument("command", metavar="<command>",
                         help="Command to run")
     args = parser.parse_args()
@@ -205,6 +222,7 @@ def main():
                                 names.add(flowbit)
         for name in names:
             print(name)
+
 
 if __name__ == "__main__":
     sys.exit(main())
